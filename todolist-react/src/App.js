@@ -1,21 +1,53 @@
-import React from 'react';
-import {ToDoList} from './todoList'
-import { Header } from './inc/header';
-import { Footer } from './inc/footer';
-
+import React, {Component} from 'react';
+import {LoginBox} from './components/LoginBox'
+import {RegisterBox} from './components/RegisterBox'
+import './assets/css/login.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 
+class App extends Component{
 
-function App() {
-  const myTask = ["çarşamba gününe kadar yetişmesi gereken işler var"];
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoginOpen: true,
+      isRegisterOpen: false
+    };
+  }
 
-  return (
-    <div className="App">
-      <Header></Header>
-      <ToDoList myTaskKey={myTask}></ToDoList>
-      <Footer></Footer>
-    </div>
-  );
+  showLoginBox() {
+    this.setState({isLoginOpen: true, isRegisterOpen: false});
+  }
+
+  showRegisterBox() {
+    this.setState({isRegisterOpen: true, isLoginOpen: false});
+  }
+
+  render() {
+    
+    return (
+      <div className="root-container">
+
+        <div className="box-controller">
+
+          <div className={"controller " + (this.state.isLoginOpen? "selected-controller": "")}
+            onClick={this.showLoginBox.bind(this)}>
+            Login
+          </div>
+
+          <div className={"controller " + (this.state.isRegisterOpen ? "selected-controller": "")} 
+            onClick={this.showRegisterBox.bind(this)}>
+            Register
+          </div>
+        </div>
+        
+        <div className="box-container">
+          {this.state.isLoginOpen && <LoginBox/>}
+          {this.state.isRegisterOpen && <RegisterBox/>}
+        </div>
+      </div>
+    );
+
+  }
+
 }
-
-export default App;
+export default App
