@@ -5,6 +5,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -33,7 +34,8 @@ public class User {
     @Transient
     private String passwordConfirm;
 
-
+    @OneToMany(mappedBy = "ownerUser")
+    private Set<ToDoList> toDoLists;
 
     public Long getId() {
         return id;

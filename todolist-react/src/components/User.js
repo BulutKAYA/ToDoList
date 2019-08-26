@@ -1,30 +1,45 @@
+import React, {Component} from 'react';
 
-import React, { Component } from "react";
+import {LoginBox} from '../components/LoginBox'
+import {RegisterBox} from '../components/RegisterBox'
 
+export default class User extends Component{
 
-export class User extends React.Component {
-    state = {
-        loading: true,
-        user: null
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoginOpen: true,
+      isRegisterOpen: false
     };
+  }
 
-    async componentDidMount() {
-        const url = 'http://localhost:8080/api/user?email=bulutkaya67@gmail.com&password=123456';
-        const response = await fetch(url);
-        const data = await response.json();
-        this.setState({ user: data, loading: false });
-    }
+  showLoginBox() {
+    this.setState({isLoginOpen: true, isRegisterOpen: false});
+  }
 
-    render() {
-        if (this.state.loading) {
-            return <div>loading...</div>;
-        }
-        return (
-            <div>
-                <div>{this.state.user.username}</div>
-                <div>{this.state.user.displayName}</div>
-                <div>{this.state.user.email}</div>
+  showRegisterBox() {
+    this.setState({isRegisterOpen: true, isLoginOpen: false});
+  }
+
+  render() {
+    
+    return (
+       <div>
+            <div className={"controller " + (this.state.isLoginOpen? "selected-controller": "")}
+              onClick={this.showLoginBox.bind(this)}>
+              Login
             </div>
-        );
-    }
+
+            <div className={"controller " + (this.state.isRegisterOpen ? "selected-controller": "")} 
+              onClick={this.showRegisterBox.bind(this)}>
+              Register
+            </div>
+          
+            <div className="box-container">
+                {this.state.isLoginOpen && <LoginBox/>}
+                {this.state.isRegisterOpen && <RegisterBox/>}
+            </div>
+        </div>
+    );
+  }
 }
