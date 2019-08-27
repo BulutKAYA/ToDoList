@@ -19,6 +19,9 @@ public class ToDoItem {
 
     private Byte statu;
 
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "dead_line")
     private Date deadLine;
 
     @ManyToOne(cascade = CascadeType.MERGE)

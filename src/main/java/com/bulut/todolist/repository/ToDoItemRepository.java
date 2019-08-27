@@ -9,7 +9,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface ToDoItemRepository extends JpaRepository<ToDoItem, Long> {
-    @Query("SELECT a.id, a.list_id, a.name, a.description, a.dead_line, a.create_date, a.modify_date " +
-            "FROM ToDoItem a  where a.list_id= :id")
-    List<ToDoItem> getUserToDoItemsOfList(@Param("id") Long id);
+    @Query(value = "SELECT * FROM ToDoItem a  where a.list_id=:id", nativeQuery = true)
+    List<ToDoItem> getToDoItemsOfList(@Param("id") Long id);
 }

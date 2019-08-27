@@ -20,7 +20,7 @@ public class ToDoList {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User ownerUser;
 
-    @OneToMany(mappedBy = "ownerList")
+    @OneToMany(mappedBy = "list_id")
     private Set<ToDoItemDependency> toDoItemDependencies;
 
     @OneToMany(mappedBy = "ownerList")

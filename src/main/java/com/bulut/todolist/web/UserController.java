@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -14,16 +15,22 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestController
-@RequestMapping("/api/user")
+@RestController("/user")
+@RequestMapping(value = "/api/user")
 @CrossOrigin
 public class UserController {
     @Autowired
     private UserService userService;
 
     @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
     private MessageSource messageProvider;
 
+    public UserController(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @PostMapping("")
     public ResponseEntity<?> userRegistration(@Valid @RequestBody User user, BindingResult result){
@@ -46,7 +53,7 @@ public class UserController {
         return userService.findUserByEmailAndPassword(email, password);
     }
 
-    @GetMapping("/login")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String doLogin(String email, String password) {
 
         final String view = "user/login";
@@ -56,6 +63,12 @@ public class UserController {
             return view;
         }
         return "redirect:/todolist";
+    }
+
+    @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
+    public void signUp(@RequestBody User user) {
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userService.saveOrUpdateUser(user);
     }
 
 }

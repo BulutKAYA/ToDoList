@@ -16,7 +16,7 @@ public class ToDoItemDependency {
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "list_id", referencedColumnName = "id")
-    private ToDoList ownerList;
+    private ToDoList list_id;
 
     public Long getId() {
         return id;
