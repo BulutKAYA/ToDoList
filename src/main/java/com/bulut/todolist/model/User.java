@@ -5,11 +5,21 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "user")
 public class User {
+
+    public User(User users) {
+        this.id = users.getId();
+        this.email = users.getEmail();
+        this.password = users.getPassword();
+        this.roles = users.getRoles();
+        this.username = users.getUsername();
+        this.displayName =users.getDisplayName();
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,6 +47,20 @@ public class User {
     @OneToMany(mappedBy = "ownerUser")
     private Set<ToDoList> toDoLists;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    public User() {}
+
+    public User(String username, String displayName, String email, String password) {
+        this.username = username;
+        this.displayName = displayName;
+        this.email = email;
+        this.password = password;
+    }
     public Long getId() {
         return id;
     }
@@ -98,5 +122,21 @@ public class User {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public String getFirstRole(){
+        if (roles.size() > 0)
+            return roles.toArray()[0].toString();
+        else{
+            return "user";
+        }
     }
 }

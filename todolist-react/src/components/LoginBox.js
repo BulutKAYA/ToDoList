@@ -1,6 +1,7 @@
 import React from 'react';
-import axios from 'axios';
-import navigate from 'react-router-dom'
+import { login } from '../util/ApiUtil';
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { ACCESS_TOKEN } from '../util/Constants';
 
 export class LoginBox extends React.Component {
 
@@ -46,30 +47,25 @@ export class LoginBox extends React.Component {
     }
 
     submitLogin(e) {
-        console.log(this.state);
 
         if (this.state.username == "") {
             this.showValidationErr("username", "Username Cannot be empty!");
+            e.preventDefault();
         }
         if (this.state.email == "") {
             this.showValidationErr("email", "Email Cannot be empty!");
+            e.preventDefault();
         }
         if (this.state.password == "") {
             this.showValidationErr("password", "Password Cannot be empty!");
+            e.preventDefault();
         }
-
-        this.props.history.push('/todolist');
-        
-        axios.get('http://localhost:8080/api/user/login', this.state)
-        .then(Response =>{
-            this.props.history.push('/todolist');
-        })
-        .catch(error => {
-            console.log(error)
-        });
-
+        const loginRequest = Object.assign({}, this.state);
+        const response = login(loginRequest)
+        //localStorage.setItem(ACCESS_TOKEN, response.accessToken);
+        this.props.onLogin();
+        e.preventDefault();
     }
-
     render() {
         let passwordErr = null,
             emailErr = null;
@@ -84,7 +80,7 @@ export class LoginBox extends React.Component {
         }
 
         return (
-            
+
             <div className="inner-container">
                 <div className="header">
                     Login
@@ -97,10 +93,10 @@ export class LoginBox extends React.Component {
                             type="text"
                             name="username"
                             className="login-input"
-                            placeholder="Username" 
-                            onChange={this.onEmailChange.bind(this)}/>
-                        
-                        <small className="danger-error">{emailErr ? emailErr: ""}</small>
+                            placeholder="Username"
+                            onChange={this.onEmailChange.bind(this)} />
+
+                        <small className="danger-error">{emailErr ? emailErr : ""}</small>
                     </div>
 
                     <div className="input-group">
@@ -109,18 +105,14 @@ export class LoginBox extends React.Component {
                             type="password"
                             name="password"
                             className="login-input"
-                            placeholder="Password" 
+                            placeholder="Password"
                             onChange={this.onPasswordChange.bind(this)} />
 
-                        <small className="danger-error">{passwordErr? passwordErr: ""}</small>
+                        <small className="danger-error">{passwordErr ? passwordErr : ""}</small>
                     </div>
+                    <Link to="/todolist" className="login-btn" onClick={this.submitLogin.bind(this)}>
+                        Login</Link>
 
-                    <button
-                        type="button"
-                        className="login-btn"
-                        onClick={this
-                            .submitLogin
-                            .bind(this)}>Login</button>
 
                 </div>
             </div>
