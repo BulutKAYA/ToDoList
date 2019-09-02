@@ -1,7 +1,6 @@
 import React from 'react';
 import {BrowserRouter, Route, Redirect, Switch} from 'react-router-dom';
 
-
 import ToDoList from './components/ToDoList';
 import User from './components/User';
 import { getCurrentUser } from './util/ApiUtil';

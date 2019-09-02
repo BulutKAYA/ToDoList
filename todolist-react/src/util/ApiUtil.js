@@ -1,45 +1,49 @@
 import { API_BASE_URL, AUGMENT_BASE_URL, ACCESS_TOKEN, HEADER_STRING, TOKEN_PREFIX } from './Constants';
 import axios from 'axios';
 
-const request = (options) => {
-    const headers = new Headers({
+const request = async (options) => {
+
+    var token = localStorage.getItem(ACCESS_TOKEN);
+
+    var header = {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
-    })
+    }
     
-    if(localStorage.getItem(ACCESS_TOKEN)) {
-        headers.append(HEADER_STRING, TOKEN_PREFIX + localStorage.getItem(ACCESS_TOKEN))
+    if(token) {
+        header = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorisation' : token,
+        }
     }
-
-    const defaults = {headers: headers};
-    options = Object.assign({}, defaults, options);
-
-    if(options.method == "POST"){
-        axios.post(options.url, options)
-        .then(Response =>{
-            return Response
-        })
-        .catch(error => {
-            console.log(error)
-        });
-    }
-    else{
-        axios.get(options.url, options)
-        .then(Response =>{
-            return Response
-        })
-        .catch(error => {
-            console.log(error)
-        });
-    }
-
     
+    try {
+        if(options.method == "POST"){
+            let res = await axios.post(options.url, options.body, {headers: header});
+            if(res.status == 200)
+            {
+                return res;
+            }
+        }
+        else{
+            let res = await axios.get(options.url, options.body, {headers: header});
+            if(res.status == 200)
+            {
+                return res;
+            }
+        }
+    }
+    catch (err) {
+        console.error(err);
+    }
 };
 
 export function login(loginRequest) {
     return request({
         url: AUGMENT_BASE_URL + "/signin",
         method: 'POST',
-        body: JSON.stringify(loginRequest)
+        body: loginRequest
     });
 }
 
@@ -56,8 +60,9 @@ export function getCurrentUser() {
         return Promise.reject("No access token set.");
     }
 
+    const token = localStorage.getItem(ACCESS_TOKEN)
     return request({
-        url: AUGMENT_BASE_URL + "/getuser",
+        url: AUGMENT_BASE_URL + "/getuser?token=" + token,
         method: 'GET'
     });
 }

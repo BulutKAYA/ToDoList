@@ -4,11 +4,21 @@ import { ACCESS_TOKEN } from '../util/Constants';
 
 export class ToDoList extends React.Component {
 
+    constructor(props){
+        super(props)
+        this.state = {
+            token : ""
+        }
+    }
+    componentDidMount(){
+        this.state.token = localStorage.getItem(ACCESS_TOKEN);
+    }
+
     render() {
         
         return (
             <div>
-                 {localStorage.getItem(ACCESS_TOKEN)}
+               
             </div>
         );
     }

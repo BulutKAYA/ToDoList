@@ -1,8 +1,10 @@
 package com.bulut.todolist.web;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import com.bulut.todolist.model.Role;
@@ -13,15 +15,17 @@ import com.bulut.todolist.security.JwtGenerator;
 import com.bulut.todolist.security.JwtValidator;
 import com.bulut.todolist.security.SecurityConstants;
 import com.bulut.todolist.service.UserService;
+import org.aspectj.weaver.patterns.IToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-
+@CrossOrigin(allowedHeaders = "*")
 @RestController
 @RequestMapping("/auth")
 public class AuthRestAPIs {
@@ -52,10 +56,7 @@ public class AuthRestAPIs {
                     HttpStatus.BAD_REQUEST);
         }
         else {
-            HttpHeaders headers = new HttpHeaders();
-            headers.add(SecurityConstants.HEADER_STRING,
-                    SecurityConstants.TOKEN_PREFIX + this.jwtGenerator.generate(user));
-            return new ResponseEntity<>("redirect:/api/todolist/list?id=" + user.getId(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(this.jwtGenerator.generate(user), HttpStatus.OK);
         }
 
     }

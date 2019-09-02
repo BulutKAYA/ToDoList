@@ -1,7 +1,7 @@
 import React from 'react';
 import { login } from '../util/ApiUtil';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import { ACCESS_TOKEN } from '../util/Constants';
+import { ACCESS_TOKEN, HEADER_STRING} from '../util/Constants';
 
 export class LoginBox extends React.Component {
 
@@ -60,11 +60,29 @@ export class LoginBox extends React.Component {
             this.showValidationErr("password", "Password Cannot be empty!");
             e.preventDefault();
         }
-        const loginRequest = Object.assign({}, this.state);
-        const response = login(loginRequest)
-        //localStorage.setItem(ACCESS_TOKEN, response.accessToken);
-        this.props.onLogin();
-        e.preventDefault();
+        const loginRequest = {
+            email: this.state.email,
+            password: this.state.password
+        };
+
+        const $this = this;
+        login(loginRequest)
+            .then(function (response) {
+                const data = response.data
+                localStorage.setItem(ACCESS_TOKEN, data);
+
+                $this.props.onLogin()
+                    .then(responseOnLogin => {
+                        console.log($this.props)
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+
     }
     render() {
         let passwordErr = null,
@@ -110,8 +128,8 @@ export class LoginBox extends React.Component {
 
                         <small className="danger-error">{passwordErr ? passwordErr : ""}</small>
                     </div>
-                    <Link to="/todolist" className="login-btn" onClick={this.submitLogin.bind(this)}>
-                        Login</Link>
+                    <button className="login-btn" onClick={this.submitLogin.bind(this)}>
+                        Login</button>
 
 
                 </div>
